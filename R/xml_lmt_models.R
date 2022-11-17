@@ -166,7 +166,7 @@ if(length(m$out_nested_covariate_effect)!=0){ #for nested situation
 	     tmp_pos=!m$out_nested_covariate_effect%in%m$poly_effect
 		m_covariate=c(m_covariate,paste0(m$out_nested_covariate_effect[tmp_pos],"(t(co(n(",
 										 m$in_nested_covariate_effect[tmp_pos],
-									      ")))*",m$in_nested_covariate_effect[tmp_pos],i))
+									      "))))*",m$in_nested_covariate_effect[tmp_pos],i))
 	}
 
 	if(sum(m$poly_effect%in%m$out_nested_covariate_effect)!=0){  #poly_expression  exists
