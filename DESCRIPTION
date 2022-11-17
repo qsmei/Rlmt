@@ -2,13 +2,16 @@ Package: Rlmt
 Type: Package
 Title: R wrapper of LMT(Linear Mixed Models Toolbox)
 Version: 1.0.0
-Date: 2022-09-23
+Date: 2022-11-17
 Authors@R: c(person("Quanshun", "Mei",
     role=c("aut", "cre"),
-    email="hzau_qsmei@163.com")
+    email="quanshun1994@gmail.com"),
+    person("Ole", "Christensen",
+    role=c("aut"),
+    email="olef.christensen@qgg.au.dk")
     )
 Author: Quanshun Mei
-Maintainer: Quanshun Mei <hzau_qsmei@163.com>
+Maintainer: Quanshun Mei <quanshun1994@gmail.com>
 Description: LMT wrapper for animal and plant breeding
 License: GPL-3
 Encoding: UTF-8
