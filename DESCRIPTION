@@ -6,7 +6,7 @@ Date: 2022-11-17
 Authors@R: c(person("Quanshun", "Mei",
     role=c("aut", "cre"),
     email="quanshun1994@gmail.com"),
-    person("Ole","Fredslund","Christensen",
+    person("Ole","Fredslund Christensen",
     role=c("aut"),
     email="olef.christensen@qgg.au.dk")
     )
