@@ -4,7 +4,7 @@ xml_lmt_vars<-function(pars,  #include model_type and model_file
 
 if(!is.null(pars$res_gamma$file)|!is.null(pars$res_gamma$value)){
 
-	cat("Using user-prvoded  Γ matrix to construct Residual variance structures!\n")
+	cat("Using user-prvoded  Gamma matrix to construct Residual variance structures! \n")
 		# under development, this function was achieved by using res_block.csv 
 		# vars_xml=rbind(vars_xml,"      <gamma>")
 		# vars_xml=rbind(vars_xml,"        <D>")
