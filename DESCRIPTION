@@ -10,7 +10,7 @@ Authors@R: c(person("Quanshun", "Mei",
     role=c("aut"),
     email="olef.christensen@qgg.au.dk")
     )
-Author: Quanshun Mei
+Author: Quanshun Mei and Ole Fredslund Christensen
 Maintainer: Quanshun Mei <quanshun1994@gmail.com>
 Description: LMT wrapper for animal and plant breeding
 License: GPL-3
