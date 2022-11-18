@@ -32,6 +32,7 @@
 install.packages("R6")
 devtools::install_github("qsmei/Rlmt")
 ```
+(here assuming that user has package `devtools` installed already).
 
 If you have any questions about Rlmt, please contact the *author* (quanshun1994@gmail.com) or (olef.christensen@qgg.au.dk).
 
