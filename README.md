@@ -1,5 +1,5 @@
 
-### Rlmt: R warrper of the Linear Mixed Models Toolbox (LMT)
+### Rlmt: R wrapper of the Linear Mixed Models Toolbox (LMT)
 
 ## Contents
 
