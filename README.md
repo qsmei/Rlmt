@@ -16,7 +16,7 @@
 
 ​	The **L**inear mixed **M**odels **T**oolbox (**lmt**) is a stand-alone single executable software for for large scale linear mixed model analysis. **lmt** has been used successfully for genetic evaluation data sets with >>200k genotyped animals, >>15m animals, >>500m equations. More details about lmt can be found in website: [lmt website](https://dmu.ghpc.au.dk/lmt/wiki/index.php?title=The_Linear_Mixed_Models_Toolbox)
 
-​	In order to further assistance the use of lmt, i developed an R package: Rlmt for interfacing with lmt. This R package is developed via R6 package which can provides an implementation of encapsulated object-oriented programming for R.  And this makes the grammar of Rlmt looks like easy and elegant (i hope :smile:). 
+​	In order to further assistance the use of lmt, I developed an R package: Rlmt for interfacing with lmt. This R package is developed via R6 package which can provides an implementation of encapsulated object-oriented programming for R.  And this makes the grammar of Rlmt looks like easy and elegant (i hope :smile:). 
 
 ​	About the usage of lmt in academic and commercial,  user should follow the rules  as mentioned in lmt website. 
 
@@ -79,7 +79,7 @@ mymodels=lmt_models$new(fixed=tr1~f11+f12+f13,covariate=~c1c1,random=~id)
 #construct Rlmt object
 mylmt=lmt$new(models=mymodels,data=mydata,software_path="/usr/home/qgg/vinzent/lmt")
 
-#default of Rlmt: only solved mix model with provided varinace components
+#default of Rlmt: only solved mixed model with provided variance components
 mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result") #output path
 
 #modify variacne components directly, Rlmt also allows user to provide the file of variance components
@@ -109,7 +109,7 @@ mydata=lmt_data$new(phe_file=paste0(example_path,"/data.csv"),
 mymodels=lmt_models$new(fixed=tr1~f11+f12+f13,covariate=~c1c1,random=~id)
 mymodels$pars$blup_type="SS_GBLUP"
 
-#modify variacne components directly, Rlmt also allows user to provide the file of variance components
+#modify variance components directly, Rlmt also allows user to provide the file of variance components
 mymodels$pars$add_vars(value=49,name="g")
 mymodels$pars$add_vars(value=15,name="r")
 
