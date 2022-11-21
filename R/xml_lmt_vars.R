@@ -119,7 +119,7 @@ vars_xml=rbind(vars_xml,paste0("    vars: ",paste(setdiff(vars_name,"r"),collaps
 				vars_xml=rbind(vars_xml,ifelse(pars$blup_type%in%"SS_GBLUP",paste0("          grm: mygrm",i), paste0("          genotype: mygeno",i)))  #there is only need of grm  for SS_GBLUP
 						                                                #not yet for multiple grms or multple genotypes in H	......					
 				vars_xml=rbind(vars_xml,switch(!is.null(pars$aweight),paste0("          aweight:",pars$aweight), NULL)) 
-				vars_xml=rbind(vars_xml,switch(!is.null(pars$switch),paste0("          switch:",pars$switch), NULL))
+				vars_xml=rbind(vars_xml,switch(!is.null(pars$switch)&is.null(mylmt$models$pars$meta_gamma),paste0("          switch:",pars$switch), NULL))
 
 				vars_xml=rbind(vars_xml,switch(pars$blup_type%in%c("SS_GBLUP","SS_TBLUP"),"        </H>",NULL)) #there is no need of <H> tag  for SS_SNPBLUP											
 			
