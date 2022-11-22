@@ -390,14 +390,14 @@ lmt<-R6Class("lmt",
 	software_path=NULL,
 	software_name=NULL,
 	output_path=NULL,
-	show_info=FALSE,
+	show_info=TRUE,
 initialize=function(models=lmt_models$new(),
 					data=lmt_data$new(),
 					xml_file=NULL,
 					software_path=NULL,
 					software_name="lmt",
 					output_path=NULL,
-					show_info=FALSE
+					show_info=TRUE
 					){
 		
 	self$data=data
