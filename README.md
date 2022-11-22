@@ -133,7 +133,7 @@ mydata=lmt_data$new(phe_file=paste0(example_path,"/data.csv"),
 mymodels=lmt_models$new(fixed=tr1~f11+f12+f13,covariate=~c1c1,random=~id)
 mylmt=lmt$new(models=mymodels,data=mydata,software_path="/usr/home/qgg/vinzent/lmt")
 mymodels$pars$blup_type="SS_GBLUP"
-mylmt$models$pars$meta_gamma=0.5
+mylmt$models$pars$meta_gamma=matrix(c(0.5,0.1,0.1,0.5),ncol=2) #Gamma matrix
 mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result") #output path
 
 
