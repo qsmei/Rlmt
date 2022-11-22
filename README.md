@@ -139,9 +139,9 @@ mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result") #output path
 
 #################ssGBLUP with two genomic factors###################
 mydata=lmt_data$new(phe_file=paste0(example_path,"/data.csv"),
-					ped_file=paste0(example_path,"/pedigree_unsorted.csv"),
-					geno_file=c(paste0(example_path,"/genotypes1.txt"),paste0(example_path,"/genotypes2.txt")),
-					geno_id_file=c(paste0(example_path,"/genoids1.csv"),paste0(example_path,"/genoids2.csv")))
+		    ped_file=paste0(example_path,"/pedigree_unsorted.csv"),
+		    geno_file=c(paste0(example_path,"/genotypes1.txt"),paste0(example_path,"/genotypes2.txt")),
+		    geno_id_file=c(paste0(example_path,"/genoids1.csv"),paste0(example_path,"/genoids2.csv")))
 
 
 mymodels=lmt_models$new(fixed=tr1~f11+f12+f13,covariate=~c1c1,random=~id1+id2)
