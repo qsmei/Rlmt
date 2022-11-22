@@ -247,9 +247,9 @@ if(length(m$random_effect)!=0){   #for non-nested situation
 			}
 			p_value=p_value+1
 			
-			m_random=c(m_random,paste0(pe_name,"*p",i,"(v(p(",p_value,")))"))	 #id*p1(v(p(1)))	
+			m_random=c(m_random,paste0(pe_name,"*pe",i,"(v(pe(",p_value,")))"))	 #id*p1(v(p(1)))	
 			m_random_level=c(m_random_level,100+p_value)			
-			m_random_type=c(m_random_type,"p")
+			m_random_type=c(m_random_type,"pe")
 			
 			}else{                #non-(genetic effect,maternal effect, permanent effect) 
 							    #for this situation, the symbol of random effect is themself
@@ -327,9 +327,9 @@ if(length(m$out_nested_random_effect)!=0){ #for nested situation
 			p_value=p_value+1
 
 			m_random=c(m_random,paste0(m$out_nested_random_effect[tmp_pos],"(t(co(n(",pe_name,
-			                                "))))*p",i,"(v(p(",p_value,")))"))	 #id*m1(v(g(1)))	
+			                                "))))*pe",i,"(v(pe(",p_value,")))"))	 #id*m1(v(g(1)))	
 			m_random_level=c(m_random_level,100+p_value)						
-			m_random_type=c(m_random_type,"p")
+			m_random_type=c(m_random_type,"pe")
 			}else{
 			ng_value=ng_value+1
 			m_random_type=c(m_random_type,r)			
@@ -367,7 +367,8 @@ if(length(m$out_nested_random_effect)!=0){ #for nested situation
 			g_value=g_value+1
 
 
-			m_random_type=c(m_random_type,g_type)
+			#m_random_type=c(m_random_type,g_type)
+			m_random_type=c(m_random_type,rep(g_type,length(m$poly_expression)))
 				ma_value=sum(m_random_type%in%g_type)
 			
 			
@@ -397,11 +398,12 @@ if(length(m$out_nested_random_effect)!=0){ #for nested situation
 
 			m_random=c(m_random,paste0(m$out_nested_random_effect[tmp_pos],"(t(co(",
 									   paste0("p(",paste(1:length(m$poly_expression),collapse = ","),");n("),pe_name,
-			                                "))))*p",i,"(v(g(",
+			                                "))))*pe",i,"(v(pe(",
 										 paste(p_value:(p_value+length(m$poly_expression)-1),collapse=","),")))"))	
 			p_value=p_value+length(m$poly_expression)-1			
 			m_random_level=c(m_random_level,100+p_value)
-			m_random_type=c(m_random_type,"p")
+			m_random_type=c(m_random_type,rep("pe",length(m$poly_expression)))
+			#m_random_type=c(m_random_type,"pe")
 			}else{       #non-genetic effect
 			ng_value=ng_value+1
 			m_random_type=c(m_random_type,r)			
@@ -427,7 +429,7 @@ final_random_type=m_random_type # for assign intial variance components
 final_random_type=c(final_random_type,rep("r",length(formulas))) #including residual variance
 
 m_random_type=unique(m_random_type)
-m_random_type=m_random_type[order(match(m_random_type,c("g","p",setdiff(m_random_type,c("g","p")))))]
+m_random_type=m_random_type[order(match(m_random_type,c("g","pe",setdiff(m_random_type,c("g","pe")))))]
 
 #model xml 
 model_xml="  <models>" 
