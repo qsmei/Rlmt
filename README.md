@@ -32,7 +32,12 @@
 install.packages("R6")
 devtools::install_github("qsmei/Rlmt")
 ```
-(here assuming that user has package `devtools` installed already).
+(here assuming that user has package `devtools` installed already). In case you want to install in a local directory, then 
+
+```R
+library(devtools)
+withr::with_libpaths(new = ".Rlibs/", install_github("qsmei/Rlmt"))
+```
 
 If you have any questions about Rlmt, please contact the *author* (quanshun1994@gmail.com) or (olef.christensen@qgg.au.dk).
 
@@ -79,18 +84,19 @@ mymodels=lmt_models$new(fixed=tr1~f11+f12+f13,covariate=~c1c1,random=~id)
 
 #construct Rlmt object
 mylmt=lmt$new(models=mymodels,data=mydata,software_path="/usr/home/qgg/vinzent/lmt")
+## note here that by default, blup_type="PBLUP"
+
+#specify variance components directly, Rlmt also allows user to provide the file of variance components
+mymodels$pars$add_vars(value=49,name="g")
+mymodels$pars$add_vars(value=15,name="r")
+
 
 #default of Rlmt: only solved mixed model with provided variance components
 mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result") #output path
 
-#modify variacne components directly, Rlmt also allows user to provide the file of variance components
-mymodels$pars$add_vars(value=49,name="g")
-mymodels$pars$add_vars(value=15,name="r")
-
 #estimate variance components by airemlc
-m_jobs=mymodels$pars$jobs
-m_jobs$type="airemlc"
-
+mymodels$pars$jobs$type="airemlc"
+ 
 mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result1") #output path
 ```
 
@@ -115,8 +121,7 @@ mymodels$pars$add_vars(value=49,name="g")
 mymodels$pars$add_vars(value=15,name="r")
 
 #estimate variance components by airemlc
-m_jobs=mymodels$pars$jobs
-m_jobs$type="airemlc"
+mymodels$pars$jobs$type="airemlc"
 
 #construct Rlmt object
 mylmt=lmt$new(models=mymodels,data=mydata,software_path="/usr/home/qgg/vinzent/lmt")
