@@ -434,7 +434,7 @@ initialize=function(models=lmt_models$new(),
 		
 	}
 	
-	cat(paste0("Results of LMT are saved in path: ",output_path,"\n"))
+
 	cat(paste0("Start the ",self$models$pars$blup_type," analyse of ",length(trait_name),
 	    ifelse(length(trait_name)==1," trait"," traits")," model:",paste(trait_name,collapse = " & ")," \n"))
 
@@ -453,7 +453,7 @@ initialize=function(models=lmt_models$new(),
 	}else{
 		system(paste0(self$software_path,"/",self$software_name," -f ",paste0(output_path,"/",paste(trait_name,collapse = "_"),"_lmt_par.xml")),ignore.stdout=T)
 	}
-	
+	cat(paste0("Results of LMT are saved in path: ",output_path,"\n"))	
 	cat(paste0("Complete the ",self$models$pars$blup_type," analyse of ",length(trait_name),
 	    ifelse(length(trait_name)==1," trait"," traits")," model:",paste(trait_name,collapse = " & ")," \n"))						
 					   
