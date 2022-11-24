@@ -32,7 +32,7 @@
 install.packages("R6")
 devtools::install_github("qsmei/Rlmt")
 ```
-(here assuming that user has package `devtools` installed already). In case you want to install in a local directory, then 
+(here assuming that user has package `devtools` installed already). In case you want to install in a local directory, e.g. .Rlibs, then 
 
 ```R
 library(devtools)
@@ -89,7 +89,7 @@ mylmt=lmt$new(models=mymodels,data=mydata,software_path="/usr/home/qgg/vinzent/l
 #specify variance components directly, Rlmt also allows user to provide the file of variance components
 mymodels$pars$add_vars(value=49,name="g")
 mymodels$pars$add_vars(value=15,name="r")
-
+# Here, "g" refers to genetic variance, and "r" to residual variance.
 
 #default of Rlmt: only solved mixed model with provided variance components
 mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result") #output path
@@ -116,13 +116,12 @@ mydata=lmt_data$new(phe_file=paste0(example_path,"/data.csv"),
 mymodels=lmt_models$new(fixed=tr1~f11+f12+f13,covariate=~c1c1,random=~id)
 mymodels$pars$blup_type="SS_GBLUP"
 
-#modify variance components directly, Rlmt also allows user to provide the file of variance components
+#specify variance components
 mymodels$pars$add_vars(value=49,name="g")
 mymodels$pars$add_vars(value=15,name="r")
 
 #estimate variance components by airemlc
 mymodels$pars$jobs$type="airemlc"
-
 #construct Rlmt object
 mylmt=lmt$new(models=mymodels,data=mydata,software_path="/usr/home/qgg/vinzent/lmt")
 
@@ -138,6 +137,8 @@ mydata=lmt_data$new(phe_file=paste0(example_path,"/data.csv"),
 mymodels=lmt_models$new(fixed=tr1~f11+f12+f13,covariate=~c1c1,random=~id)
 mylmt=lmt$new(models=mymodels,data=mydata,software_path="/usr/home/qgg/vinzent/lmt")
 mymodels$pars$blup_type="SS_GBLUP"
+mymodels$pars$add_vars(value=49,name="g")
+mymodels$pars$add_vars(value=15,name="r")
 mylmt$models$pars$meta_gamma=matrix(c(0.5,0.1,0.1,0.5),ncol=2) #Gamma matrix
 mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result") #output path
 
@@ -153,6 +154,9 @@ mymodels=lmt_models$new(fixed=tr1~f11+f12+f13,covariate=~c1c1,random=~id1+id2)
 mymodels$pars$blup_type="SS_GBLUP"
 mylmt=lmt$new(models=mymodels,data=mydata,software_path="/usr/home/qgg/vinzent/lmt")
 mylmt$models$pars$jobs$type="airemlc"
+mymodels$pars$add_vars(value=40,name="g1")
+mymodels$pars$add_vars(value=9,name="g2")
+mymodels$pars$add_vars(value=15,name="r")
 mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result") #output path
 
 ##################SS_TBLUP###################
@@ -162,6 +166,8 @@ mydata=lmt_data$new(phe_file=paste0(example_path,"/data.csv"),
                     geno_id_file=paste0(example_path,"/genoids.csv"))
 mymodels=lmt_models$new(fixed=tr1~f11+f12+f13,covariate=~c1c1,random=~id)
 mymodels$pars$blup_type="SS_TBLUP"
+mymodels$pars$add_vars(value=49,name="g")
+mymodels$pars$add_vars(value=15,name="r")
 mylmt=lmt$new(models=mymodels,data=mydata,software_path="/usr/home/qgg/vinzent/lmt")
 mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result") #output path
 
@@ -191,6 +197,8 @@ m2=lmt_formulas$new(fixed=tr2~f11+f12+f13,covariate=~c1c1,random=~id) #model of 
 
 mylmt$models$add_formulas(m2) #add new trait in analysis
 mylmt$models$pars$jobs$type="airemlc" #estimate variance components by airemlc
+mymodels$pars$add_vars(value=matrix(c(49,10,10,30),ncol=2),name="g")
+mymodels$pars$add_vars(value=matrix(c(15,-5,-5,20),ncol=2),name="r")
 mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result2") #multple traits analysis
 ```
 
@@ -206,6 +214,7 @@ m1=lmt_models$new(fixed=tr1~f11+f12+f13,covariate=~c1c1,random=~id+dam)
 
 # permanent effect
 m1=lmt_models$new(fixed=tr1~f11+f12+f13,covariate=~c1c1,random=~id+dam+pe) 
+# the parameters are named "g", "pe" and "r"
 
 #nested effect
 m1=lmt_models$new(fixed=tr1~f11+f12,covariate=~f13(c1c1),random=~id+dam+pe)
