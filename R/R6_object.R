@@ -414,7 +414,7 @@ initialize=function(models=lmt_models$new(),
     trait_name=sapply(self$models$formulas,function(x)x$trait)
    
 	cat("R package:Rlmt is only the wrapper of LMT in the field of academic research! \n")
-	cat("For commercial use of the LMT, please contact Vinzent Boerner of QGG. Email: vinzent.boerner@gmx.de,vinzent.boerner@mbg.au.dk  !\n")
+	cat("For commercial use of the LMT, please contact Vinzent Boerner of QGG. Email: vinzent.boerner@gmx.de,vinzent.boerner@qgg.au.dk  !\n")
 
 	if(length(grep(" ",output_path))>0){stop("output_path shouldn't contain blank, please choose another path!")}
 	
