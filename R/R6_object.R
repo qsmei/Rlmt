@@ -135,7 +135,7 @@ initialize=function(blup_type="PBLUP",
 	self$grm_method=grm_method
 	self$res_gamma$value=res_gamma
 	self$res_gamma$file=res_gamma_file		
-	if("lmt_vars"%in%class(vars)&is.null(vars$name)&is.null(vars$name)&is.null(vars$name)){  #in the situation that vars was null object	
+	if("lmt_vars"%in%class(vars)&is.null(vars$name)&is.null(vars$name)){  #in the situation that vars was null object	
 		self$vars=vars 	
 	}else{
 		self$vars=c(NULL,vars)
@@ -163,7 +163,7 @@ initialize=function(blup_type="PBLUP",
 		
 	 
 		 if(i_vars$name%in%vars_name){ 
-			cat(paste0("vars:",i_vars$name," was already exists, the old value will be coverd by the new value!","\n"))
+			cat(paste0("vars:",i_vars$name," already existed, the new value substituted the old value!","\n"))
 			self$vars[[match(i_vars$name,vars_name)]]=i_vars
 		 }else{
 			self$vars=c(self$vars,i_vars)
@@ -178,10 +178,10 @@ initialize=function(blup_type="PBLUP",
 	 
 		vars_name=sapply(self$vars,function(x)x$name)	
 	 
-		 if(name%in%traits_name){ 
-			self$vars=self$formulas[-c(match(name,traits_name))]
+		 if(name%in%vars_name){ 
+			self$vars=self$formulas[-c(match(name,vars_name))]
 		 }else{
-		 	cat(paste0("vars:",name," is not exists in vars,please check your input!","\n"))
+		 	cat(paste0("vars:",name," does not exist in vars, please check your input!","\n"))
 		 }	
 		names(self$vars)=sapply(self$vars, function(x)x$name)
 		invisible(self)
@@ -344,7 +344,7 @@ initialize=function(phe=NULL,
 	 if(is.null(self$phe$file)&!is.null(self$phe$value)){	 #phenotype
 	 
 		if(substr(colnames(self$phe$value)[1],1,1)!="#"){
-			colnames(self$phe$value)[1]=paste0("#",colnames(local_phe)[1],collapse="") # the requiremnt of the first column name of phe data
+			colnames(self$phe$value)[1]=paste0("#",colnames(self$phe$value)[1],collapse="") # the requiremnt of the first column name of phe data
 		}
 	 
 		write.csv(self$phe$value,paste0(self$output_path,"/lmt_pheno.csv"),row.names=F)
@@ -435,7 +435,7 @@ initialize=function(models=lmt_models$new(),
 	}
 	
 
-	cat(paste0("Start the ",self$models$pars$blup_type," analyse of ",length(trait_name),
+	cat(paste0("Start the ",self$models$pars$blup_type," analysis of ",length(trait_name),
 	    ifelse(length(trait_name)==1," trait"," traits")," model:",paste(trait_name,collapse = " & ")," \n"))
 
 	system(paste0("cp -r ",self$software_path,"/",self$software_name," ",output_path))	
@@ -485,7 +485,7 @@ initialize=function(models=lmt_models$new(),
 			
 			if("lmt_vars"%in%class(models$pars$vars)&is.null(models$pars$vars$name)){ #for null lmt_vars object
 				
-				cat("User doesn't provide intial values for variance components, software will assign initial values for all random effects in formulas automaticaly!\n")
+				cat("User doesn't provide initial values for variance components, software will assign initial values for all random effects in formulas automaticaly!\n")
 				models$pars$vars=lmt_initial_vars
 			
 			}else {
@@ -496,7 +496,7 @@ initialize=function(models=lmt_models$new(),
 					
 					i_vars=models$pars$vars[[match(name,names(models$pars$vars))]]
 					if(is.null(i_vars)|!identical(nrow(matrix(i_vars$value)),nrow(matrix(initial_i_vars$value)))){					
-						cat("User-provided variance components are not compatiable with the effects in formulas, software will assign initial values for all effects in formulas automaticaly!\n")
+						cat("User-provided variance components are not compatible with the effects in formulas, software will assign initial values for all effects in formulas automaticaly!\n")
 						models$pars$vars=lmt_initial_vars
 						break;
 					}
