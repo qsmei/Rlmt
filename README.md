@@ -32,7 +32,7 @@
 install.packages("R6")
 devtools::install_github("qsmei/Rlmt")
 ```
-(here assuming that user has package `devtools` installed already). In case you want to install in a local directory, e.g. .Rlibs, then 
+(here assuming that user has package `devtools` installed already). In case you want to install in a local directory, e.g. `.Rlibs`, then 
 
 ```R
 library(devtools)
