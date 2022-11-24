@@ -197,8 +197,8 @@ m2=lmt_formulas$new(fixed=tr2~f11+f12+f13,covariate=~c1c1,random=~id) #model of 
 
 mylmt$models$add_formulas(m2) #add new trait in analysis
 mylmt$models$pars$jobs$type="airemlc" #estimate variance components by airemlc
-mymodels$pars$add_vars(value=matrix(c(49,10,10,30),ncol=2),name="g")
-mymodels$pars$add_vars(value=matrix(c(15,-5,-5,20),ncol=2),name="r")
+mylmt$models$pars$add_vars(value=matrix(c(49,10,10,30),ncol=2),name="g")
+mylmt$models$pars$add_vars(value=matrix(c(15,-5,-5,20),ncol=2),name="r")
 mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result2") #multple traits analysis
 ```
 
