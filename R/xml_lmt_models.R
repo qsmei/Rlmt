@@ -15,7 +15,7 @@ tmp_fixed=get_nested(fixed)
 fixed_effect=tmp_fixed$effect_name
 in_nested_fixed_effect=tmp_fixed$in_nested_effect
 out_nested_fixed_effect=tmp_fixed$out_nested_effect
-fixed_effect=setdiff(fixed_effect,in_nested_fixed_effect) #without nested random effect
+#fixed_effect=setdiff(fixed_effect,in_nested_fixed_effect) #without nested random effect
 
 if(!is.null(in_nested_fixed_effect)){stop("Please check your input of the fixed term,there should be no nested structure!")}
 
