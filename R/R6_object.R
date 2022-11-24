@@ -463,6 +463,11 @@ initialize=function(models=lmt_models$new(),
     #show in the console
     print = function(...) {
       cat("<Rlmt> of ",2, " elements\n", sep = "")
+    },
+	
+    #show log file in the console
+    show_logfile = function(...) {
+      system("less -S lmt.log")
     }
    ),
    
