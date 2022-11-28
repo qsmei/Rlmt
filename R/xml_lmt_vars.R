@@ -183,8 +183,8 @@ types=data.frame(table(random_type))
 vars=NULL
 for(i in 1:nrow(types)){
 vars_name=as.character(types[i,1])
-vars_value=matrix(0.5,nrow=types[i,2],ncol=types[i,2])
-diag(vars_value)=1
+vars_value=matrix(5,nrow=types[i,2],ncol=types[i,2])
+diag(vars_value)=10
 vars=c(vars,lmt_vars$new(name=vars_name,value=vars_value))
 }
 names(vars)=sapply(vars,function(x)x$name)
