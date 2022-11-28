@@ -68,7 +68,7 @@ for(i_job in jobs$type){
 		jobs_xml=rbind(jobs_xml,switch(!is.null(jobs$convtype),paste0("      convtype:",jobs$convtype), NULL)) 		
 		jobs_xml=rbind(jobs_xml,switch(sum(jobs$convtype%in%c("ll","ng","cd"))>=1,paste0("      convtype",jobs$convtype,":",jobs$conv), NULL)) 
 		jobs_xml=rbind(jobs_xml,switch(!is.null(jobs$nscale),paste0("      nscale:",jobs$nscale), NULL)) 		
-		jobs_xml=rbind(jobs_xml,ifelse(!is.null(jobs$switch),paste0("      switch:",jobs$switch), "switch:writeai,residuals,solutions")) 
+		jobs_xml=rbind(jobs_xml,ifelse(!is.null(jobs$switch),paste0("      switch:",jobs$switch), "      switch:writeai,residuals,solutions")) 
 
 		jobs_xml=rbind(jobs_xml,"    </airemlc>")		
 
