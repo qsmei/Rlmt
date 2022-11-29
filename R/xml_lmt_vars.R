@@ -191,5 +191,49 @@ names(vars)=sapply(vars,function(x)x$name)
 return(vars)
 }
 
+#random effect level for ai matrix
+get_ai_level<-function(i_vars,n_order=2){
+lev=NULL
+if(n_order>=2){
+	for(i in 1:(n_order-1)){
+		if(i!=n_order){
+			lev=c(lev,i,paste0(i,"_",(i+1):n_order))
+		}
+	}
+}
+lev=c(lev,n_order)
+return(paste0(i_vars,lev))
+}
 
+#get the name of ai matrix    
+get_ai_name<-function(vars,t_random){
+n_trait=length(t_random)    
+t_random=do.call(base::c,t_random)
+#get vars name
+vars_name=sapply(vars,function(x)x$name) #get the name of vars
+vars=vars[order(match(vars_name,c("g",paste0("g",1:100),"pe",paste0("pe",1:100),setdiff(vars_name,c("g",paste0("g",1:100),"pe",paste0("pe",1:100))),"r",paste0("r",1:100))))] #order the postion of vars 
+vars_name=sapply(vars,function(x)x$name)  #make sure the order of vars name in accordance with that in .xml file 
+
+#get ai                                                                                                                                                                                                        
+ai_name=NULL 
+for(i_vars in vars_name){
+max_value=suppressWarnings(max(na.omit(as.numeric(gsub(i_vars,"",t_random)))))
+ai_name=c(ai_name,get_ai_level(i_vars,max_value))
+}
+#ai_name=c(ai_name,get_ai_level("r",n_order=n_trait)) #include residual 
+return(ai_name)
+}
+
+
+#calculate the se of variance components
+lmt_cal_se<-function(expr,vars_value,ai){
+		ai_name=colnames(ai)
+		vars_value=as.numeric(vars_value[1,])
+  	    for (i in 1:length(ai_name))
+			assign(ai_name[i], vars_value[i])
+			grad <- t(as.numeric(attr(eval(deriv(expr, ai_name)), "gradient")))
+			h2<-eval(parse(text=as.character(expr)[-1]))
+			
+			return(list(h2=h2,h2_se=sqrt(diag(grad %*% solve(ai) %*% t(grad)))))
+	}
 

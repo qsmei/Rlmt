@@ -132,12 +132,13 @@ p_value=0 #the order of permanent effect
 ma_value=0 # the order of maternal effect, for multple traits model, maternal effects only have one component
 m_random_type=NULL	# the type of random effect	
 formulas=models$formulas	
-			
+t_random=NULL #trait speficied random with number, for speficing var-name in AI-inv matrix 
+trait_name=NULL		
 for(i in 1:length(formulas)){ # c(NULL,models) make models becomes list 
 
 m=get_models(formulas[[i]])
 trait=m$trait
-
+trait_name=c(trait_name,trait)
 #for fixed effect, it doesn't have nested  and polynominal structure
 m_fixed=NULL
 if(length(m$fixed_effect)!=0){m_fixed=c(m_fixed,paste0(m$fixed_effect,"*",m$fixed_effect,i))}
@@ -186,7 +187,8 @@ if(length(m$out_nested_covariate_effect)!=0){ #for nested situation
 #for random effect
 m_random=NULL
 m_random_level=NULL #for sorting the postion of different random effect in the final formula
-
+tmp_t_random=NULL  #trait speficied random with number, for speficing var-name in AI-inv matrix 
+		
 if(length(m$random_effect)!=0){   #for non-nested situation
 
 	
@@ -203,12 +205,15 @@ if(length(m$random_effect)!=0){   #for non-nested situation
 			m_random_type=c(m_random_type,g_type)			 
 			g_value=g_value+1	
 			m_random=c(m_random,paste0(id_name,"*u",i,g_number,"(v(",g_type,"(",sum(m_random_type%in%g_type),")))"))	 #id*u1(v(g(1)))	
+			tmp_random_name=paste0(g_type,sum(m_random_type%in%g_type)) # eg. g1,g2			
+			
 			m_random_level=c(m_random_level,1+g_value)
 
 					if(is_gg){   #exist genetic group effect
 					gg_value=gg_value+1
 					m_random_type=c(m_random_type,"gg")
 					m_random=c(m_random,paste0(id_name,"(t(gg(gg_ped)))*",id_name,"gg",i,"(v(gg(",sum(m_random_type%in%"gg"),")))"))	 #id*p1(v(p(1)))	
+					tmp_random_name=paste0("gg",sum(m_random_type%in%"gg")) # eg. gg1,gg2
 					m_random_level=c(m_random_level,50+gg_value)		
 					}
 					
@@ -229,12 +234,14 @@ if(length(m$random_effect)!=0){   #for non-nested situation
 				ma_value=sum(m_random_type%in%g_type)
 			
 			m_random=c(m_random,paste0(dam_name,"*m",i,g_number,"(v(",g_type,"(",ma_value,")))"))	 #id*m1(v(g(1)))	
+			tmp_random_name=paste0(g_type,ma_value) # eg. g1,g2
 			m_random_level=c(m_random_level,1+g_value)
 
 					if(is_gg){   #exist genetic group effect
 					gg_value=gg_value+1
 					m_random_type=c(m_random_type,"gg")
 					m_random=c(m_random,paste0(dam_name,"(t(gg(gg_ped)))*",dam_name,"gg",i,"(v(gg(",sum(m_random_type%in%"gg"),")))"))	 #id*p1(v(p(1)))	
+					tmp_random_name=paste0("gg",sum(m_random_type%in%"gg")) # eg. g1,g2
 					m_random_level=c(m_random_level,50+gg_value)		
 					}
 
@@ -247,7 +254,8 @@ if(length(m$random_effect)!=0){   #for non-nested situation
 			}
 			p_value=p_value+1
 			
-			m_random=c(m_random,paste0(pe_name,"*pe",i,"(v(pe(",p_value,")))"))	 #id*p1(v(p(1)))	
+			m_random=c(m_random,paste0(pe_name,"*pe",i,"(v(pe(",p_value,")))"))	 #id*p1(v(p(1)))
+			tmp_random_name=paste0("pe",p_value) # eg. pe1,pe2
 			m_random_level=c(m_random_level,100+p_value)			
 			m_random_type=c(m_random_type,"pe")
 			
@@ -255,7 +263,8 @@ if(length(m$random_effect)!=0){   #for non-nested situation
 							    #for this situation, the symbol of random effect is themself
 			ng_value=ng_value+1
 			m_random_type=c(m_random_type,r)			
-			m_random=c(m_random,paste0(r,"*ng",ng_value,"(v(",r,"(",sum(m_random_type%in%r),")))"))	 #id*ng1(v(q(1)))	
+			m_random=c(m_random,paste0(r,"*ng",ng_value,"(v(",r,"(",sum(m_random_type%in%r),")))"))	 #id*ng1(v(q(1)))
+			tmp_random_name=paste0(r,sum(m_random_type%in%r)) # eg. pe1,pe2			
 			m_random_level=c(m_random_level,1000+ng_value)
 
 			}		
@@ -264,7 +273,8 @@ if(length(m$random_effect)!=0){   #for non-nested situation
 
 		       #it seems that there are no poly_expression for non-nested random effect
 			
-			}	
+			}
+		tmp_t_random=c(tmp_t_random,tmp_random_name)
 	}
 }
 
@@ -286,12 +296,14 @@ if(length(m$out_nested_random_effect)!=0){ #for nested situation
 			g_value=g_value+1	
 			m_random=c(m_random,paste0(m$out_nested_random_effect[tmp_pos],"(t(co(n(",id_name,
 			                                "))))*u",i,g_number,"(v(",g_type,"(",sum(m_random_type%in%g_type),")))"))	 #id*u1(v(g(1)))	
+			tmp_random_name=paste0(g_type,sum(m_random_type%in%g_type)) # eg. g									
 			m_random_level=c(m_random_level,1+g_value)			
 
 					if(is_gg){   #exist genetic group effect
 					gg_value=gg_value+1
 					m_random_type=c(m_random_type,"gg")
 					m_random=c(m_random,paste0(id_name,"(t(gg(gg_ped)))*",id_name,"gg",i,"(v(gg(",sum(m_random_type%in%"gg"),")))"))	 #id*p1(v(p(1)))	
+					tmp_random_name=paste0("gg",sum(m_random_type%in%"gg")) # eg. g	
 					m_random_level=c(m_random_level,50+gg_value)		
 					}
 
@@ -308,12 +320,14 @@ if(length(m$out_nested_random_effect)!=0){ #for nested situation
 			
 			m_random=c(m_random,paste0(m$out_nested_random_effect[tmp_pos],"(t(co(n(",dam_name,
 			                                "))))*m",i,g_number,"(v(",g_type,"(",ma_value,")))"))	 #id*m1(v(g(1)))	
+			tmp_random_name=paste0(g_type,ma_value) # eg. g1									
 			m_random_level=c(m_random_level,1+g_value)
 
 					if(is_gg){   #exist genetic group effect
 					gg_value=gg_value+1
 					m_random_type=c(m_random_type,"gg")
-					m_random=c(m_random,paste0(dam_name,"(t(gg(gg_ped)))*",dam_name,"gg",i,"(v(gg(",sum(m_random_type%in%"gg"),")))"))	 #id*p1(v(p(1)))	
+					m_random=c(m_random,paste0(dam_name,"(t(gg(gg_ped)))*",dam_name,"gg",i,"(v(gg(",sum(m_random_type%in%"gg"),")))"))	 #id*p1(v(p(1)))
+					tmp_random_name=paste0("gg",sum(m_random_type%in%"gg")) # eg. gg1		
 					m_random_level=c(m_random_level,50+gg_value)		
 					}
 
@@ -328,13 +342,15 @@ if(length(m$out_nested_random_effect)!=0){ #for nested situation
 
 			m_random=c(m_random,paste0(m$out_nested_random_effect[tmp_pos],"(t(co(n(",pe_name,
 			                                "))))*pe",i,"(v(pe(",p_value,")))"))	 #id*m1(v(g(1)))	
+			tmp_random_name=paste0("pe",p_value) # eg. g								
 			m_random_level=c(m_random_level,100+p_value)						
 			m_random_type=c(m_random_type,"pe")
 			}else{
 			ng_value=ng_value+1
 			m_random_type=c(m_random_type,r)			
 			m_random=c(m_random,paste0(m$out_nested_random_effect[tmp_pos],"(t(co(n(",r,
-			                                "))))*ng",ng_value,"(v(",r,"(",sum(m_random_type%in%r),")))"))	 #id*ng1(v(q(1)))	
+			                                "))))*ng",ng_value,"(v(",r,"(",sum(m_random_type%in%r),")))"))	 #id*ng1(v(q(1)))
+			tmp_random_name=paste0(r,sum(m_random_type%in%r)) # eg. little1,little2									
 			m_random_level=c(m_random_level,1000+ng_value)				
 			}		
 	
@@ -351,13 +367,16 @@ if(length(m$out_nested_random_effect)!=0){ #for nested situation
 									   paste0("p(",paste(1:length(m$poly_expression),collapse = ","),");n("),id_name,
 			                                "))))*u",i,g_number,"(v(",g_type,"(",
 									   paste((sum(m_random_type%in%g_type)-length(m$poly_expression)+1):(sum(m_random_type%in%g_type)),collapse=","),")))"))	 
+			tmp_random_name=paste0(g_type,(sum(m_random_type%in%g_type)-length(m$poly_expression)+1):(sum(m_random_type%in%g_type))) # eg. g1,g2,g3...
+
 			g_value=g_value+length(m$poly_expression)-1		
 			m_random_level=c(m_random_level,1+g_value)				
-
+			
 					if(is_gg){   #exist genetic group effect
 					gg_value=gg_value+1
 					m_random_type=c(m_random_type,"gg")
 					m_random=c(m_random,paste0(id_name,"(t(gg(gg_ped)))*",id_name,"gg",i,"(v(gg(",sum(m_random_type%in%"gg"),")))"))	 #id*p1(v(p(1)))	
+					tmp_random_name=paste0(gg,sum(m_random_type%in%"gg")) # eg. gg1...
 					m_random_level=c(m_random_level,50+gg_value)		
 					}
 					
@@ -376,7 +395,8 @@ if(length(m$out_nested_random_effect)!=0){ #for nested situation
 			m_random=c(m_random,paste0(m$out_nested_random_effect[tmp_pos],"(t(co(",
 									   paste0("p(",paste(1:length(m$poly_expression),collapse = ","),");n("),dam_name,
 			                                "))))*m",i,g_number,"(v(",g_type,"(",
-									     paste((ma_value-length(m$poly_expression)+1):(ma_value),collapse=","),")))"))	
+									     paste((ma_value-length(m$poly_expression)+1):(ma_value),collapse=","),")))"))					 
+			tmp_random_name=paste0(g_type,(ma_value-length(m$poly_expression)+1):(ma_value)) # eg. g1,g2,g3...							 									 
 			g_value=g_value+length(m$poly_expression)-1
 			m_random_level=c(m_random_level,1+g_value)			
 
@@ -399,7 +419,8 @@ if(length(m$out_nested_random_effect)!=0){ #for nested situation
 			m_random=c(m_random,paste0(m$out_nested_random_effect[tmp_pos],"(t(co(",
 									   paste0("p(",paste(1:length(m$poly_expression),collapse = ","),");n("),pe_name,
 			                                "))))*pe",i,"(v(pe(",
-										 paste(p_value:(p_value+length(m$poly_expression)-1),collapse=","),")))"))	
+										 paste(p_value:(p_value+length(m$poly_expression)-1),collapse=","),")))"))
+			tmp_random_name=paste0("pe",p_value:(p_value+length(m$poly_expression)-1)) # eg. pe1,pe2,pe3...								
 			p_value=p_value+length(m$poly_expression)-1			
 			m_random_level=c(m_random_level,100+p_value)
 			m_random_type=c(m_random_type,rep("pe",length(m$poly_expression)))
@@ -410,13 +431,16 @@ if(length(m$out_nested_random_effect)!=0){ #for nested situation
 			m_random=c(m_random,paste0(m$out_nested_random_effect[tmp_pos],"(t(co(",
 									   paste0("p(",paste(1:length(m$poly_expression),collapse = ","),");n("),r,
 			                                "))))*ng",ng_value,"(v(",r,"(", 
-										  paste(sum(m_random_type%in%r):(sum(m_random_type%in%r)+length(m$poly_expression)-1),collapse=","),")))"))	
+										  paste(sum(m_random_type%in%r):(sum(m_random_type%in%r)+length(m$poly_expression)-1),collapse=","),")))"))
+			tmp_random_name=paste0("r",sum(m_random_type%in%r):(sum(m_random_type%in%r)+length(m$poly_expression)-1)) # eg. little1...	
+										  
 			ng_value=ng_value+length(m$poly_expression)-1		
 			m_random_level=c(m_random_level,1000+ng_value)				
 
 			}		
 			
-		}	
+		}
+	tmp_t_random=c(tmp_t_random,tmp_random_name)
 	}
 }
 
@@ -424,7 +448,13 @@ if(length(m$out_nested_random_effect)!=0){ #for nested situation
 m_random=m_random[order(m_random_level)] #make sure the formula easliy readable in the final formula
 m_formula=paste0(trait,"=",paste(c(m_fixed,m_covariate,m_random),collapse="+"))
 final_formula=c(final_formula,m_formula)
+t_random=c(t_random,list(c(tmp_t_random,paste0("r",i)))) #trait_specified_random effect name with number
+#print(m)
+# print(m$trait)
+# print(m_random)
+# print(m_formula)
 }
+names(t_random)=trait_name
 final_random_type=m_random_type # for assign intial variance components
 final_random_type=c(final_random_type,rep("r",length(formulas))) #including residual variance
 
@@ -459,5 +489,5 @@ if(length(m$poly_expression)!=0){
 }
 	model_xml=rbind(model_xml,"  </models>" )	
 	
-return(list(xml=model_xml,type=final_random_type))
+return(list(xml=model_xml,type=final_random_type,t_random=t_random))
 }

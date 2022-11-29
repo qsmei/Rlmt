@@ -1,4 +1,33 @@
 library(R6) 
+
+lmt_vars_se <- R6Class("lmt_vars_se",
+  public = list(
+	ai_mat=NULL,
+	vars_mat=NULL,
+	se=NULL,
+	t_random=NULL,
+
+initialize=function(ai_mat=NULL,
+					vars_mat=NULL,
+					se=NULL,
+					t_random=NULL #trait specific random effect with number
+					 ){
+		
+	self$ai_mat=ai_mat
+	self$vars_mat=vars_mat 
+	self$se=se	
+	self$t_random=t_random
+	},
+	
+	cal_lmt_se=function(expr){
+	
+		print(lmt_cal_se(expr,self$vars_mat,self$ai_mat))
+	
+	}
+	
+)
+)
+
 lmt_vars <- R6Class("lmt_vars",
   public = list(
 	value=NULL,
@@ -114,6 +143,7 @@ lmt_pars <- R6Class("lmt_pars",
 	gg_type=NULL, # absorb, extra
 	jobs=NULL,
 	vars=NULL,
+	vars_se=NULL,
 	res_gamma=NULL, #
 initialize=function(blup_type="PBLUP",
 					aweight=0.05,
@@ -123,6 +153,7 @@ initialize=function(blup_type="PBLUP",
 					grm_method="VR",  # VR, YA
 					jobs=lmt_jobs$new(),
 					vars=lmt_vars$new(),
+					vars_se=lmt_vars_se$new(),
 					res_gamma=NULL,
 					res_gamma_file=NULL
 					){
@@ -134,7 +165,8 @@ initialize=function(blup_type="PBLUP",
 	self$jobs=jobs
 	self$grm_method=grm_method
 	self$res_gamma$value=res_gamma
-	self$res_gamma$file=res_gamma_file		
+	self$res_gamma$file=res_gamma_file
+	self$vars_se=vars_se
 	if("lmt_vars"%in%class(vars)&is.null(vars$name)&is.null(vars$name)){  #in the situation that vars was null object	
 		self$vars=vars 	
 	}else{
@@ -185,7 +217,34 @@ initialize=function(blup_type="PBLUP",
 		 }	
 		names(self$vars)=sapply(self$vars, function(x)x$name)
 		invisible(self)
-	 }		  
+	 },
+
+	add_ai_mat=function(){
+	
+	
+		if(file.exists("ai_ai.csv")){
+		
+			#read ai matrix 
+			ai<-read.csv("ai_ai.csv",header=F)
+			n_dimension=floor(sqrt(ncol(ai)*2))
+			lmt_ai_mat<-matrix(0,n_dimension,n_dimension);
+			lmt_ai_mat[upper.tri(lmt_ai_mat,diag=TRUE)]<-as.numeric(ai[nrow(ai),]);
+			lmt_ai_mat[lower.tri(lmt_ai_mat)]<-lmt_ai_mat[upper.tri(lmt_ai_mat)];
+			
+			#determine ai matrix name 
+			ai_name=get_ai_name(self$vars,self$vars_se$t_random)
+			colnames(lmt_ai_mat)=rownames(lmt_ai_mat)=ai_name
+			lmt_vars_mat=read.csv("ai_pa.csv",header=F)
+			colnames(lmt_vars_mat)=ai_name
+			lmt_vars_mat=lmt_vars_mat[nrow(lmt_vars_mat),]
+			self$vars_se$ai_mat=lmt_ai_mat
+			self$vars_se$vars_mat=lmt_vars_mat
+		}
+	
+	
+	
+	
+	}
 		  
 )
 )
@@ -458,6 +517,10 @@ initialize=function(models=lmt_models$new(),
 	    ifelse(length(trait_name)==1," trait"," traits")," model:",paste(trait_name,collapse = " & ")," \n"))						
 					   
     
+	#reading ai matrix 
+	
+		self$models$pars$add_ai_mat();
+	
    },
    
     #show in the console
@@ -484,7 +547,7 @@ initialize=function(models=lmt_models$new(),
 			tmp_xmls=xml_lmt_models(models)
 			random_type=tmp_xmls$type
 			models_xml=tmp_xmls$xml
-
+			self$models$pars$vars_se$t_random=tmp_xmls$t_random #trait specific random effect with number
 			#initial vars 
 			lmt_initial_vars=initial_vars(random_type)
 			
