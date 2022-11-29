@@ -4,18 +4,21 @@ lmt_vars_se <- R6Class("lmt_vars_se",
   public = list(
 	ai_mat=NULL,
 	vars_mat=NULL,
-	se=NULL,
+	gen_cor=NULL,
+	h2=NULL,
 	t_random=NULL,
 
 initialize=function(ai_mat=NULL,
 					vars_mat=NULL,
-					se=NULL,
+					gen_cor=NULL,
+					h2=NULL,
 					t_random=NULL #trait specific random effect with number
 					 ){
 		
 	self$ai_mat=ai_mat
 	self$vars_mat=vars_mat 
-	self$se=se	
+	self$h2=h2
+	self$gen_cor=gen_cor
 	self$t_random=t_random
 	},
 	
@@ -239,11 +242,58 @@ initialize=function(blup_type="PBLUP",
 			lmt_vars_mat=lmt_vars_mat[nrow(lmt_vars_mat),]
 			self$vars_se$ai_mat=lmt_ai_mat
 			self$vars_se$vars_mat=lmt_vars_mat
+		
+			#default is to calculate the se of each vars for each trait, and the genetic correlation(if exists)
+			
+			trait_h2=NULL
+			for(i_vars_name in self$vars_se$t_random){
+				
+				i_vars_mat=as.numeric(lmt_vars_mat[1,colnames(lmt_vars_mat)%in%i_vars_name])
+					
+				h2=NULL 
+				h2_se=NULL 
+				
+				for (j in i_vars_name){
+					expr=eval(parse(text=paste0(paste0("~",j,"/","(",paste(i_vars_name,collapse="+"),")"))))
+					result=lmt_cal_se(expr,lmt_vars_mat,lmt_ai_mat)
+					h2=c(h2,result[[1]])
+					h2_se=c(h2_se,result[[2]])
+				}
+				
+			trait_h2=c(trait_h2,list(data.frame(h2=h2,h2_se=h2_se,row.names=i_vars_name,stringsAsFactors=F)))	
+			}
+			names(trait_h2)=names(self$vars_se$t_random)
+			self$vars_se$h2=trait_h2
+			#genetic correlation
+			if(length(self$vars_se$t_random)>=2){
+				n_trait=length(self$vars_se$t_random)
+				gen_cor=diag(n_trait)
+				gen_cor_se=diag(0,n_trait) #diagonal is 0
+					r2=NULL
+					r2_se=NULL
+					for(i in 1:(n_trait-1)){
+						if(i!=n_trait){
+						
+							for(j in (i+1):n_trait){
+							
+								g_lev=paste0("g",i,"_",j)
+								expr=eval(parse(text=paste0(paste0("~",g_lev,"/","sqrt(g",i,"*g",j,")"))))
+								result=lmt_cal_se(expr,lmt_vars_mat,lmt_ai_mat)
+								r2=c(r2,result[[1]]) #genetic correlation
+								r2_se=c(r2_se,result[[2]]) #se of genetic correlation
+							}
+						}
+					}
+				gen_cor[upper.tri(gen_cor,diag=F)]<-r2;
+				gen_cor[lower.tri(gen_cor)]=t(gen_cor)[lower.tri(t(gen_cor))]
+				gen_cor_se[upper.tri(gen_cor_se,diag=F)]<-r2_se;
+				gen_cor_se[lower.tri(gen_cor_se)]=t(gen_cor_se)[lower.tri(t(gen_cor_se))]
+				colnames(gen_cor)=rownames(gen_cor)=names(self$vars_se$t_random)
+				colnames(gen_cor_se)=rownames(gen_cor_se)=names(self$vars_se$t_random)
+			self$vars_se$gen_cor=list(gen_cor=gen_cor,gen_cor_se=gen_cor_se)
+			}
+	
 		}
-	
-	
-	
-	
 	}
 		  
 )
@@ -517,8 +567,9 @@ initialize=function(models=lmt_models$new(),
 	    ifelse(length(trait_name)==1," trait"," traits")," model:",paste(trait_name,collapse = " & ")," \n"))						
 					   
     
-	#read ai matrix 
-	if(self$models$pars$jobs$type=="airemlc") self$models$pars$add_ai_mat();
+	#reading ai matrix 
+	
+		self$models$pars$add_ai_mat();
 	
    },
    
