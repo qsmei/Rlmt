@@ -225,6 +225,7 @@ return(ai_name)
 }
 
 
+
 #calculate the se of variance components
 lmt_cal_se<-function(expr,vars_value,ai){
 		ai_name=colnames(ai)
@@ -234,5 +235,6 @@ lmt_cal_se<-function(expr,vars_value,ai){
 			grad <- t(as.numeric(attr(eval(deriv(expr, ai_name)), "gradient")))
 			h2<-eval(parse(text=as.character(expr)[-1]))
 			
-			return(list(h2=h2,h2_se=ifelse(diag(grad %*% solve(ai) %*% t(grad))<=0,0,sqrt(diag(grad %*% solve(ai) %*% t(grad)))))
+			return(list(h2=h2,h2_se=ifelse(diag(grad %*% solve(ai) %*% t(grad))<=0,0,sqrt(diag(grad) %*% solve(ai) %*% t(grad)))))
 	}
+
