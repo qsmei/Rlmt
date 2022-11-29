@@ -229,7 +229,7 @@ initialize=function(blup_type="PBLUP",
 			n_dimension=floor(sqrt(ncol(ai)*2))
 			lmt_ai_mat<-matrix(0,n_dimension,n_dimension);
 			lmt_ai_mat[upper.tri(lmt_ai_mat,diag=TRUE)]<-as.numeric(ai[nrow(ai),]);
-			lmt_ai_mat[lower.tri(lmt_ai_mat)]<-lmt_ai_mat[upper.tri(lmt_ai_mat)];
+			lmt_ai_mat[lower.tri(lmt_ai_mat)]=t(lmt_ai_mat)[lower.tri(t(lmt_ai_mat))]
 			
 			#determine ai matrix name 
 			ai_name=get_ai_name(self$vars,self$vars_se$t_random)
