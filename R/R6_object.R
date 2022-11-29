@@ -517,9 +517,8 @@ initialize=function(models=lmt_models$new(),
 	    ifelse(length(trait_name)==1," trait"," traits")," model:",paste(trait_name,collapse = " & ")," \n"))						
 					   
     
-	#reading ai matrix 
-	
-		self$models$pars$add_ai_mat();
+	#read ai matrix 
+	if(self$models$pars$jobs$type=="airemlc") self$models$pars$add_ai_mat();
 	
    },
    
