@@ -500,13 +500,15 @@ lmt<-R6Class("lmt",
 	software_name=NULL,
 	output_path=NULL,
 	show_info=TRUE,
+	ebv=TRUE,
 initialize=function(models=lmt_models$new(),
 					data=lmt_data$new(),
 					xml_file=NULL,
 					software_path=NULL,
 					software_name="lmt",
 					output_path=NULL,
-					show_info=TRUE
+					show_info=TRUE,
+					ebv=TRUE
 					){
 		
 	self$data=data
@@ -514,6 +516,7 @@ initialize=function(models=lmt_models$new(),
 	self$xml_file=xml_file
 	self$software_path=software_path
 	self$software_name=software_name
+	self$ebv=ebv
 	self$output_path=ifelse(is.null(output_path),getwd(),output_path)
 		  },
    
@@ -570,13 +573,16 @@ initialize=function(models=lmt_models$new(),
 	#reading ai matrix 
 	
 		self$models$pars$add_ai_mat();
-	
+		
+	#read EBV from output	
+		trait_name=sapply(self$models$formulas,function(x)x$trait)
+		self$ebv=getEBV(trait_name);
    },
    
     #show in the console
-    print = function(...) {
-      cat("<Rlmt> of ",2, " elements\n", sep = "")
-    },
+    # print = function(...) {
+      # cat("<Rlmt> of ",2, " elements\n", sep = "")
+    # },
 	
     #show log file in the console
     show_logfile = function(...) {
