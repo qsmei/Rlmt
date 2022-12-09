@@ -98,6 +98,19 @@ mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result") #output path
 mymodels$pars$jobs$type="airemlc"
  
 mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result1") #output path
+
+#tidy output of the genetic parameters
+vars_se=mylmt$models$pars$vars_se #parameters related variance componnets are sotred in mylmt$models$pars$vars_se
+ai=vars_se$ai_mat #average information matrix
+vars_mat=vars_se$vars_mat #the value of variance components and its se 
+h2=vars_se$h2  #the proportion of variance compoents to total phenotype variance, and its se
+gen_cor=vars_se$gen_cor #for multiple traits models, the genetic correation and its se 
+vars_se$cal_lmt_se(~g1/(g1+Litter1+r1)) #calculate se of user defined expression based on delta method  
+
+#tidy the output of ebv (residual of phenotype will be added in the next step)
+ebv=mylmt$ebv
+
+#for the all above tidy output data, Rlmt also saved them as .csv file automatically for each trait in the result path 
 ```
 
 #### Ex 2. SSGBLUP
@@ -177,6 +190,19 @@ mylmt$run_lmt("/usr/home/qgg/qumei/lmt/test_Result") #output path
 #################ssGBLUP model with GRM supplied externally###################
 #need to fix some errors in the next step
 
+
+#tidy output of the genetic parameters
+vars_se=mylmt$models$pars$vars_se #parameters related variance componnets are sotred in mylmt$models$pars$vars_se
+ai=vars_se$ai_mat #average information matrix
+vars_mat=vars_se$vars_mat #the value of variance components and its se 
+h2=vars_se$h2  #the proportion of variance compoents to total phenotype variance, and its se
+gen_cor=vars_se$gen_cor #for multiple traits models, the genetic correation and its se 
+vars_se$cal_lmt_se(~g1/(g1+Litter1+r1)) #calculate se of user defined expression based on delta method  
+
+#tidy the output of ebv (residual of phenotype will be added in the next step)
+ebv=mylmt$ebv
+
+#for the all above tidy output data, Rlmt also saved them as .csv file automatically for each trait in the result path 
 
 ```
 
