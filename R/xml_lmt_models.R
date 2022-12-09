@@ -506,8 +506,10 @@ return(list(xml=model_xml,type=final_random_type,t_random=t_random))
 		for(i in 1:length(trait_name)){
 
 			ebv=sol[sol$effect%in%"g"&sol$trait%in%paste0("T",i),c("sub_effect","level","value")]
-			colnames(ebv)=c("sub_effect","id","value")
+			colnames(ebv)=c("genetic effect","id","value")
 			i_sol=sol[sol$trait%in%paste0("T",i),]
+			write.csv(ebv,paste0("Rlmt.",trait_name[i],".ebv.csv"),row.names=F)
+			#write.csv(i_sol,paste0(trait_name[i],".Rlmt.solution.csv"),row.names=F) #maybe no need to write 
 			tEBV=c(tEBV,list(list(ebv=ebv,sol=i_sol)))
 		}
 		names(tEBV)=trait_name

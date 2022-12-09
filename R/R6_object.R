@@ -24,7 +24,7 @@ initialize=function(ai_mat=NULL,
 	
 	cal_lmt_se=function(expr){
 	
-		print(lmt_cal_se(expr,self$vars_mat,self$ai_mat))
+		print(lmt_cal_se(expr,self$vars_mat$value,self$ai_mat))
 	
 	}
 	
@@ -241,13 +241,17 @@ initialize=function(blup_type="PBLUP",
 			colnames(lmt_vars_mat)=ai_name
 			lmt_vars_mat=lmt_vars_mat[nrow(lmt_vars_mat),]
 			self$vars_se$ai_mat=lmt_ai_mat
-			self$vars_se$vars_mat=lmt_vars_mat
-		
+			lmt_vars_mat_se=sqrt(diag(solve(0.5*lmt_ai_mat)))
+			self$vars_se$vars_mat=list(value=lmt_vars_mat,se=lmt_vars_mat_se)
 			#default is to calculate the se of each vars for each trait, and the genetic correlation(if exists)
-			
+			trait_name=names(self$vars_se$t_random)
 			trait_h2=NULL
+			k=0
+			vars_lmt_se=matrix(paste0(round(lmt_vars_mat,3),"(",round(lmt_vars_mat_se,3),")"),nrow=1)
+			colnames(vars_lmt_se)=colnames(lmt_vars_mat)
+			write.csv(vars_lmt_se,paste0("Rlmt.vars.csv"),row.names=F)			
 			for(i_vars_name in self$vars_se$t_random){
-				
+				k=k+1#which trait 
 				i_vars_mat=as.numeric(lmt_vars_mat[1,colnames(lmt_vars_mat)%in%i_vars_name])
 					
 				h2=NULL 
@@ -259,14 +263,15 @@ initialize=function(blup_type="PBLUP",
 					h2=c(h2,result[[1]])
 					h2_se=c(h2_se,result[[2]])
 				}
-				
-			trait_h2=c(trait_h2,list(data.frame(h2=h2,h2_se=h2_se,row.names=i_vars_name,stringsAsFactors=F)))	
+				i_trait_h2=data.frame(h2=h2,h2_se=h2_se,row.names=i_vars_name,stringsAsFactors=F)
+			trait_h2=c(trait_h2,list(i_trait_h2))	
+				write.csv(i_trait_h2,paste0("Rlmt.",trait_name[k],".h2.csv"))
 			}
-			names(trait_h2)=names(self$vars_se$t_random)
+			names(trait_h2)=trait_name
 			self$vars_se$h2=trait_h2
 			#genetic correlation
 			if(length(self$vars_se$t_random)>=2){
-				n_trait=length(self$vars_se$t_random)
+				n_trait=length(trait_name)
 				gen_cor=diag(n_trait)
 				gen_cor_se=diag(0,n_trait) #diagonal is 0
 					r2=NULL
@@ -291,6 +296,9 @@ initialize=function(blup_type="PBLUP",
 				colnames(gen_cor)=rownames(gen_cor)=names(self$vars_se$t_random)
 				colnames(gen_cor_se)=rownames(gen_cor_se)=names(self$vars_se$t_random)
 			self$vars_se$gen_cor=list(gen_cor=gen_cor,gen_cor_se=gen_cor_se)
+				gen_mat=matrix(paste0(round(gen_cor,3),"(",round(gen_cor_se,3),")"),ncol=n_trait)
+				colnames(gen_mat)=rownames(gen_mat)=trait_name
+				write.csv(gen_mat,paste0("Rlmt.genetic_correlation.csv"))
 			}
 	
 		}
