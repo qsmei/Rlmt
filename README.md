@@ -110,7 +110,8 @@ vars_se$cal_lmt_se(~g1/(g1+Litter1+r1)) #calculate se of user defined expression
 #tidy the output of ebv (residual of phenotype will be added in the next step)
 ebv=mylmt$ebv
 
-#for the all above tidy output data, Rlmt also saved them as .csv file automatically for each trait in the result path 
+#for the all above tidy output data,
+#Rlmt also saved them as .csv file automatically for each trait in the result path 
 ```
 
 #### Ex 2. SSGBLUP
@@ -202,7 +203,8 @@ vars_se$cal_lmt_se(~g1/(g1+Litter1+r1)) #calculate se of user defined expression
 #tidy the output of ebv (residual of phenotype will be added in the next step)
 ebv=mylmt$ebv
 
-#for the all above tidy output data, Rlmt also saved them as .csv file automatically for each trait in the result path 
+#for the all above tidy output data, 
+#Rlmt also saved them as .csv file automatically for each trait in the result path 
 
 ```
 
